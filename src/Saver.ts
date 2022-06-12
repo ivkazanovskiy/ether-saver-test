@@ -23,7 +23,10 @@ export class Saver {
 
   public async start() {
     await this.setInitialValues();
-    console.log(this);
+    if (this.status === ESaverStatus.EMPTY) {
+      throw new Error("Could not initialize initial values");
+    }
+    this.logStatistic();
 
     while (true) {
       this.fillUpQueue();
@@ -34,7 +37,7 @@ export class Saver {
       await this.saveBlocksFromQueue(this.downQueue, this.downCounter);
       console.log("Update values");
       await this.setUpLimitValue();
-      console.log(this);
+      this.logStatistic();
     }
   }
 
@@ -66,6 +69,10 @@ export class Saver {
 
   private async setInitialValues(): Promise<void> {
     await this.setUpLimitValue();
+    if (this.status === ESaverStatus.FAILED_FETCHING) {
+      throw new Error("Can not get the latest block value");
+    }
+
     // we have to have some records in DB to start
     if (this.upCounter.value && this.downCounter.value) {
       this.status = ESaverStatus.NOT_EMPTY;
@@ -89,6 +96,8 @@ export class Saver {
       this.status = ESaverStatus.NOT_EMPTY;
       return;
     }
+
+    this.status = ESaverStatus.EMPTY;
   }
 
   private fillUpQueue(): void {
@@ -149,5 +158,16 @@ export class Saver {
       await block.save();
       counter.move();
     }
+  }
+
+  private logStatistic() {
+    console.log("\n");
+    console.log("-".repeat(50));
+    console.log("The latest block of API:", this.upLimit);
+    console.log("Max block in DB: ", this.upCounter.value);
+    console.log("Min block in DB: ", this.downCounter.value);
+    console.log("The minimal block will be recorded:", this.downLimit);
+    console.log("-".repeat(50));
+    console.log("\n");
   }
 }
