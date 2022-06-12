@@ -5,8 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && npx tsc --build",
-    "migrate": "npm run build && npx sequelize db:migrate",
-    "dev": "npx ts-node ./src/index.ts"
+    "db:create": "npm run build && npx sequelize db:create",
+    "db:migrate": "npm run build && npx sequelize db:migrate",
+    "dev": "npx ts-node ./src/index.ts",
+    "start": "npm run build && node ./dist/index.js"
+
   },
   "keywords": [],
   "author": "",
