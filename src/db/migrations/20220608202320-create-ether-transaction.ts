@@ -19,7 +19,7 @@ export = {
         type: Sequelize.STRING,
       },
       value: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL,
       },
       createdAt: {
         allowNull: false,
