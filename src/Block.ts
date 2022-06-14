@@ -3,7 +3,6 @@ import { EtherTransaction } from "./db/models/etherTransaction.model.ts";
 import { delay, isPositiveBlockData } from "./helper";
 import { EBlockStatus, Transaction } from "./types";
 
-// FIXME: rename, due to dump block.block
 export default class Block {
   private tag: string;
   public status: EBlockStatus = EBlockStatus.WAITING;
@@ -50,7 +49,6 @@ export default class Block {
   }
 
   private async recordTransactions(): Promise<void> {
-    // FIXME: maybe save transactions of pack of blocks is much better
     const previousRecord = await EtherTransaction.findOne({
       where: {
         block: this.blockValue,
